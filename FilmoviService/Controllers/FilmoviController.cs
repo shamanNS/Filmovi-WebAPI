@@ -37,7 +37,7 @@ namespace FilmoviService.Controllers
                     return BadRequest("Godina DO ne može biti manja od godine OD.");
                 }
             }
-
+            //
             if (godinaOd != null)
             //if (!String.IsNullOrWhiteSpace(godinaOd))
             {
