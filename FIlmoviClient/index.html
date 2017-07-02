@@ -1,0 +1,76 @@
+<html>
+
+<head>
+	<title>FilmClient</title>
+	<script src="js/jquery-3.2.1.js"></script>
+	<link rel="stylesheet" type="text/css" href="bootstrap-3.3.7\css\bootstrap.css" />
+	<script type="text/javascript" src="js/skripta.js"></script>
+	<style>
+		th {
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-md-4">
+				<span><button class="btn btn-success btn-md" id="btnFilmovi">Prikaži filmove</button></span>
+				<span><button class="btn btn-success btn-md" id="btnReziseri">Prikaži režisere</button></span>
+			</div>
+			<br/>
+
+		</div>
+		<div class="col-lg-9 col-md-9" id="data">
+		</div>
+		<br />
+		<br />
+		<div id="filmovi_UI">
+			<div id="divAddF" style="display:none" class="well col-lg-offset-3 col-md-offset-2 col-sm-offset-1 col-xs-offset-0 col-lg-3 col-md-3 col-sm-7 col-xs-7">
+				<form method="post" action="post/" id="formAddF">
+					<p><label>Naziv: <input class="form-control" id="fNaziv"></label></p>
+					<p><label>Žanr: <input class="form-control" id="fZanr"></label></p>
+					<p><label>Godina: <input class="form-control" id="fGodina"></label></p>
+					<p><label>Režiser: <select class="form-control" id="fReziser"></select></label></p>
+					<br />
+					<p><button class="btn btn-primary btn-md">Dodaj</button></p>
+				</form>
+			</div>
+
+			<div id="divEditF" style="display:none" class="well col-lg-offset-3 col-md-offset-2 col-sm-offset-1 col-xs-offset-0 col-lg-3 col-md-3 col-sm-7 col-xs-7">
+
+				<form method="put" action="put/" id="formEditF">
+					<input type="hidden" id="fId">
+					<p><label>Naziv: <input class="form-control" id="fNaziv_Edit"></label></p>
+					<p><label>Žanr: <input class="form-control" id="fZanr_Edit"></label></p>
+					<p><label>Godina: <input class="form-control" id="fGodina_Edit"></label></p>
+					<p><label>Režiser: <select class="form-control" id="fReziser_Edit"></select></label></p>
+					<br />
+					<p><button class="btn btn-primary btn-md">Sačuvaj izmenu</button></p>
+				</form>
+			</div>
+		</div>
+		<div id="divAddR" style="display:none" class="well col-lg-offset-3 col-md-offset-2 col-sm-offset-1 col-xs-offset-0 col-lg-3 col-md-3 col-sm-7 col-xs-7">
+			<form method="post" action="post/" id="formAddR">
+				<p><label>Ime: <input class="form-control" id="rIme"></label></p>
+				<p><label>Prezime: <input class="form-control" id="rPrezime"></label></p>
+				<p><label>Starost: <input class="form-control" id="rStarost"></label></p>
+				<br />
+				<p><button class="btn btn-primary btn-md">Dodaj</button></p>
+			</form>
+		</div>
+		<div id="divEditR" style="display:none" class="well col-lg-offset-3 col-md-offset-2 col-sm-offset-1 col-xs-offset-0 col-lg-3 col-md-3 col-sm-7 col-xs-7">
+			<form method="put" action="put/" id="formEditR">
+				<input type="hidden" id="rId">
+				<p><label>Ime: <input class="form-control" id="rIme_Edit"></label></p>
+				<p><label>Prezime: <input class="form-control" id="rPrezime_Edit"></label></p>
+				<p><label>Starost: <input class="form-control" id="rStarost_Edit"></label></p>
+				<br />
+				<p><button class="btn btn-primary btn-md">Sačuvaj izmenu</button></p>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
