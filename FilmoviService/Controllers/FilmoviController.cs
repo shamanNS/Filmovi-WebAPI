@@ -12,48 +12,83 @@ using FilmoviService.Models;
 using FilmoviService.Models.DTOs;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using FilmoviService.Repository.Interfaces;
+using FilmoviService.Repository;
 
 namespace FilmoviService.Controllers
 {
     public class FilmoviController : ApiController
     {
-        private FilmoviServiceContext db = new FilmoviServiceContext();
+        //private FilmoviServiceContext db = new FilmoviServiceContext();
+        private IFilmRepository _filmRepository;
+
+        public FilmoviController(IFilmRepository repository)
+        {
+            _filmRepository = repository;
+        }
+
 
         // GET: api/Filmovi
         [HttpGet]
-        public IHttpActionResult GetFilmovi(int? godinaOd = null, int? godinaDo = null, string genre = null)
+        //public IHttpActionResult GetFilmovi(int? godinaOd = null, int? godinaDo = null, string genre = null)
+        public IHttpActionResult GetFilmovi([FromUri] FilmFilters filter)
         {
-            var filmovi = db.Filmovi.Include(f => f.Reziser)/*.ProjectTo<FilmDTO>()*/;
 
-            if (!String.IsNullOrWhiteSpace(genre))
-            {
-                filmovi = filmovi.Where(f => f.Zanr.ToLower().Contains(genre.ToLower()));
-            }
+            //var filmovi = _filmRepository.GetAll();
+            IEnumerable<Film> filmovi = null;
 
-            if (godinaOd != null && godinaDo != null)
+            //if (filter != null)
+            if (filter.godinaOd != null || filter.godinaDo != null || !String.IsNullOrWhiteSpace(filter.genre))
             {
-                if (godinaDo < godinaOd)
+            if (filter.godinaOd != null && filter.godinaDo != null)
                 {
-                    return BadRequest("Godina DO ne može biti manja od godine OD.");
+                    if (filter.godinaDo < filter.godinaOd)
+                    {
+                        return BadRequest("Godina DO ne može biti manja od godine OD.");
+                    }
+
                 }
+                filmovi = _filmRepository.GetAll(filter);
             }
-            //
-            if (godinaOd != null)
-            //if (!String.IsNullOrWhiteSpace(godinaOd))
+            else
             {
-                //int godinaStart = int.Parse(godinaOd);
-                filmovi = filmovi.Where( f => f.Godina >= godinaOd);
+                filmovi = _filmRepository.GetAll();
             }
-            if (godinaDo != null)
-            //if (!String.IsNullOrWhiteSpace(godinaDo))
-            {
-                //int godinaEnd = int.Parse(godinaDo);
-                filmovi = filmovi.Where(f => f.Godina <= godinaDo);
-            }
-            var filmoviDTO = filmovi.OrderBy(f => f.Godina).ProjectTo<FilmDTO>();
+            #region filtriranje pre Repository-uma
+            //var filmovi = db.Filmovi.Include(f => f.Reziser);
+
+            /* if (!String.IsNullOrWhiteSpace(genre))
+             {
+                 filmovi = filmovi.Where(f => f.Zanr.ToLower().Contains(genre.ToLower()));
+             }
+
+             if (godinaOd != null && godinaDo != null)
+             {
+                 if (godinaDo < godinaOd)
+                 {
+                     return BadRequest("Godina DO ne može biti manja od godine OD.");
+                 }
+             }
+             //
+             if (godinaOd != null)
+             //if (!String.IsNullOrWhiteSpace(godinaOd))
+             {
+                 //int godinaStart = int.Parse(godinaOd);
+                 filmovi = filmovi.Where( f => f.Godina >= godinaOd);
+             }
+             if (godinaDo != null)
+             //if (!String.IsNullOrWhiteSpace(godinaDo))
+             {
+                 //int godinaEnd = int.Parse(godinaDo);
+                 filmovi = filmovi.Where(f => f.Godina <= godinaDo);
+             }
+             */
+            #endregion
+
+            var filmoviDTO = filmovi.OrderBy(f => f.Godina).AsQueryable().ProjectTo<FilmDTO>();
             //List<FilmDTO> filmovi = db.Filmovi.Include(f => f.Reziser).Select(f=> new FilmDTO { Naziv = f.Naziv, ReziserIme = f.Reziser.Ime , ReziserPrezime = f.Reziser.Prezime}).ToList();
             //var filmovi = db.Filmovi.Include( f=> f.Reziser).ToList();
-            return Ok(filmoviDTO);
+            return Ok(filmoviDTO); 
         }
 
         // GET: api/Filmovi/5
@@ -61,7 +96,9 @@ namespace FilmoviService.Controllers
         public IHttpActionResult GetFilm(int id)
         {
             //Film film = db.Filmovi.Find(id);
-            Film film = db.Filmovi.Include(f => f.Reziser).SingleOrDefault(f => f.Id == id);
+
+            var film = _filmRepository.GetById(id);
+            //Film film = db.Filmovi.Include(f => f.Reziser).SingleOrDefault(f => f.Id == id);
             if (film == null)
             {
                 return NotFound();
@@ -71,6 +108,7 @@ namespace FilmoviService.Controllers
             return Ok(Mapper.Map<FilmDTO>(film));
         }
 
+/*
         // PUT: api/Filmovi/5
         [ResponseType(typeof(void))]
         //public IHttpActionResult PutFilm(int id, Film film)
@@ -158,5 +196,6 @@ namespace FilmoviService.Controllers
         {
             return db.Filmovi.Count(e => e.Id == id) > 0;
         }
+ */
     }
 }

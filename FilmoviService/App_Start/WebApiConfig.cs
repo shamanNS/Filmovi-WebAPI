@@ -6,6 +6,10 @@ using System.Web.Http.Cors;
 using AutoMapper;
 using FilmoviService.Models;
 using FilmoviService.Models.DTOs;
+using FilmoviService.Resolver;
+using FilmoviService.Repository;
+using Microsoft.Practices.Unity;
+using FilmoviService.Repository.Interfaces;
 
 namespace FilmoviService
 {
@@ -37,6 +41,11 @@ namespace FilmoviService
                 cfg.CreateMap<FilmDTO, Film>()/*.ForMember(dest => dest.Reziser.Ime, opt => opt.MapFrom(src => src.ReziserIme))*/;
             });
 
+
+            // Unity
+            var container = new UnityContainer();
+            container.RegisterType<IFilmRepository, FilmRepository>(new HierarchicalLifetimeManager());
+            config.DependencyResolver = new UnityResolver(container); 
         }
     }
 }
