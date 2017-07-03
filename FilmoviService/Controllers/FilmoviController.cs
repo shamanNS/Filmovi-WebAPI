@@ -40,7 +40,7 @@ namespace FilmoviService.Controllers
             //if (filter != null)
             if (filter.godinaOd != null || filter.godinaDo != null || !String.IsNullOrWhiteSpace(filter.genre))
             {
-            if (filter.godinaOd != null && filter.godinaDo != null)
+                if (filter.godinaOd != null && filter.godinaDo != null)
                 {
                     if (filter.godinaDo < filter.godinaOd)
                     {
@@ -85,10 +85,10 @@ namespace FilmoviService.Controllers
              */
             #endregion
 
-            var filmoviDTO = filmovi.OrderBy(f => f.Godina).AsQueryable().ProjectTo<FilmDTO>();
+            var filmoviDTO = filmovi.OrderBy(f => f.Naziv).AsQueryable().ProjectTo<FilmDTO>();
             //List<FilmDTO> filmovi = db.Filmovi.Include(f => f.Reziser).Select(f=> new FilmDTO { Naziv = f.Naziv, ReziserIme = f.Reziser.Ime , ReziserPrezime = f.Reziser.Prezime}).ToList();
             //var filmovi = db.Filmovi.Include( f=> f.Reziser).ToList();
-            return Ok(filmoviDTO); 
+            return Ok(filmoviDTO);
         }
 
         // GET: api/Filmovi/5
@@ -108,7 +108,7 @@ namespace FilmoviService.Controllers
             return Ok(Mapper.Map<FilmDTO>(film));
         }
 
-/*
+
         // PUT: api/Filmovi/5
         [ResponseType(typeof(void))]
         //public IHttpActionResult PutFilm(int id, Film film)
@@ -126,25 +126,38 @@ namespace FilmoviService.Controllers
 
             var film = Mapper.Map<Film>(filmDTO);
 
-            db.Entry(film).State = EntityState.Modified;
+            //if (!FilmExists(id))
+            //{
+            //    return NotFound();
+            //}
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FilmExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //_filmRepository.Update(film);
 
-            return StatusCode(HttpStatusCode.NoContent);
+            //return StatusCode(HttpStatusCode.NoContent);
+
+
+            
+                //db.Entry(film).State = EntityState.Modified;
+
+                try
+                {
+                _filmRepository.Update(film);
+                //db.SaveChanges();
+            }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FilmExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                return StatusCode(HttpStatusCode.NoContent);
+              
         }
 
         // POST: api/Filmovi
@@ -156,46 +169,63 @@ namespace FilmoviService.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            
+
+
             var film = Mapper.Map<Film>(filmDTO);
-            
-            db.Filmovi.Add(film);
-            db.SaveChanges();
+            _filmRepository.Add(film);
+
+            //db.Filmovi.Add(film);
+            //db.SaveChanges();
 
             //db.Entry(film).Reference(x => x.Reziser).Load();
             return CreatedAtRoute("DefaultApi", new { id = film.Id }, film);
         }
 
         // DELETE: api/Filmovi/5
+        //[ResponseType(typeof(Film))]
+        //public IHttpActionResult DeleteFilm(int id)
+        //{
+        //    Film film = db.Filmovi.Find(id);
+        //    if (film == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    db.Filmovi.Remove(film);
+        //    db.SaveChanges();
+
+        //    return Ok(film);
+        //}
+
+
         [ResponseType(typeof(Film))]
         public IHttpActionResult DeleteFilm(int id)
         {
-            Film film = db.Filmovi.Find(id);
+            Film film = _filmRepository.GetById(id);
             if (film == null)
             {
                 return NotFound();
             }
 
-            db.Filmovi.Remove(film);
-            db.SaveChanges();
+            _filmRepository.Delete(film);
 
             return Ok(film);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
 
         private bool FilmExists(int id)
         {
-            return db.Filmovi.Count(e => e.Id == id) > 0;
+            //return db.Filmovi.Count(e => e.Id == id) > 0;
+            return _filmRepository.GetById(id) != null;
         }
- */
+
     }
 }

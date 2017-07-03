@@ -18,6 +18,16 @@ namespace FilmoviService.Repository
             db.SaveChanges();
         }
 
+        public void Update(Film film)
+        {
+            //db.Filmovi.Attach(film);
+            //db.Entry(film).Reference(f => f.Reziser).Load();
+            //db.Entry(film).State = EntityState.Modified;
+            //db.Filmovi.Find(film.Id);
+            db.Entry(film).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
         public void Delete(Film film)
         {
             db.Filmovi.Remove(film);
@@ -38,24 +48,13 @@ namespace FilmoviService.Repository
                 filmovi = filmovi.Where(f => f.Zanr.ToLower().Contains(filter.genre.ToLower()));
             }
 
-            //if (filter.godinaOd != null && filter.godinaDo != null)
-            //{
-            //    if (filter.godinaDo < filter.godinaOd)
-            //    {
-            //        return BadRequest("Godina DO ne može biti manja od godine OD.");
-            //    }
-           // }
-            //
+
             if (filter.godinaOd != null)
-            //if (!String.IsNullOrWhiteSpace(filter.godinaOd))
             {
-                //int godinaStart = int.Parse(filter.godinaOd);
                 filmovi = filmovi.Where( f => f.Godina >= filter.godinaOd);
             }
             if (filter.godinaDo != null)
-            //if (!String.IsNullOrWhiteSpace(filter.godinaDo))
             {
-                //int godinaEnd = int.Parse(filter.godinaDo);
                 filmovi = filmovi.Where(f => f.Godina <= filter.godinaDo);
             }
             return filmovi.AsEnumerable<Film>();
@@ -63,7 +62,7 @@ namespace FilmoviService.Repository
 
         public Film GetById(int id)
         {
-            return db.Filmovi.Include(f => f.Reziser).SingleOrDefault(f => f.Id == id);
+            return db.Filmovi/*.AsNoTracking()*/.Include(f => f.Reziser).SingleOrDefault(f => f.Id == id);
         }
 
         protected void Dispose(bool disposing)

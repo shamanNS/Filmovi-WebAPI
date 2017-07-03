@@ -14,6 +14,7 @@ namespace FilmoviService.Repository.Interfaces
         IEnumerable<Film> GetAll(FilmFilters filter);
         Film GetById(int id);
         void Add(Film film);
+        void Update(Film film);
         void Delete(Film film);
     }
 }
